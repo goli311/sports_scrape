@@ -16,7 +16,7 @@ def user_agent_get():
     user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=100)
     user_agent = user_agent_rotator.get_random_user_agent()
     return user_agent
-
+#test git
 
 class MainScrape(scrapy.Spider):
     name = 'mycrawler1_d'
@@ -227,3 +227,4 @@ class MainScrape(scrapy.Spider):
 
 # from scrapy.cmdline import execute
 # execute('scrapy crawl mycrawler1_d'.split())
+#new

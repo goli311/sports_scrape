@@ -93,6 +93,7 @@ class BaseballScrape(scrapy.Spider):
                                             "user-agent": user_agent_get(),
                                         }
 
+                                        # Todo : Box score request Here...
                                         box_req=requests.get(box_score_link,headers=headers)
 
                                         box_resp = Selector(text=box_req.text)
@@ -171,6 +172,64 @@ class BaseballScrape(scrapy.Spider):
                                                         except Exception as e:
                                                             print('Error In Insert Query....:{}:{}'.format(e,box_score_link))
 
+                                        # Todo : Pitchers Table
+
+                                        pitchers_table_section_get = box_resp.xpath('//section[@aria-label="Team Individual Pitching Statistics"]//table')
+                                        if pitchers_table_section_get:
+                                            for pt in pitchers_table_section_get:
+                                                pitchers_table_check = pt.xpath('./caption')
+                                                if pitchers_table_check:
+                                                    pitchers_tbody_get = pt.xpath('.//tbody/tr')
+                                                    school_name_pitchers = ''
+                                                    school_name_pitchers = pt.xpath(
+                                                        './caption/text()').get()
+                                                    print("school", school_name_pitchers)
+                                                    if pitchers_tbody_get:
+                                                        for ptb in pitchers_tbody_get:
+                                                            pitchers_player = ''
+                                                            pitchers_player_get = ptb.xpath(
+                                                                './th/a/text()')
+                                                            if pitchers_player_get:
+                                                                pitchers_player1 = pitchers_player_get.get()
+                                                                if pitchers_player1:
+                                                                    pitchers_player = re.sub("[\(\[].*?[\)\]]", "",pitchers_player1)
+                                                                    pitchers_player = pitchers_player.strip()
+
+                                                            elif ptb.xpath('./th/text()'):
+                                                                pitchers_player1 = ptb.xpath('./th/text()').get()
+                                                                if pitchers_player1:
+                                                                    pitchers_player = re.sub("[\(\[].*?[\)\]]", "",pitchers_player1)
+                                                                    pitchers_player = pitchers_player.strip()
+                                                            # print(pitchers_table_check.get())
+                                                            pitchers_ip_get = ptb.xpath('./td[contains(@data-label,"IP")]/text()').get()
+                                                            pitchers_h_get = ptb.xpath('./td[contains(@data-label,"H")]/text()').get()
+                                                            pitchers_r_get = ptb.xpath('./td[contains(@data-label,"R")]/text()').get()
+                                                            pitchers_er_get = ptb.xpath('./td[contains(@data-label,"ER")]/text()').get()
+                                                            pitchers_bb_get = ptb.xpath('./td[contains(@data-label,"BB")]/text()').get()
+                                                            pitchers_so_get = ptb.xpath('./td[contains(@data-label,"SO")]/text()').get()
+                                                            pitchers_wp_get = ptb.xpath('./td[contains(@data-label,"WP")]/text()').get()
+                                                            pitchers_bk_get = ptb.xpath('./td[contains(@data-label,"BK")]/text()').get()
+                                                            pitchers_hbp_get = ptb.xpath('./td[contains(@data-label,"HBP")]/text()').get()
+                                                            pitchers_ibb_get = ptb.xpath('./td[contains(@data-label,"IBB")]/text()').get()
+                                                            pitchers_ab_get = ptb.xpath('./td[contains(@data-label,"AB")]/text()').get()
+                                                            pitchers_bf_get = ptb.xpath('./td[contains(@data-label,"BF")]/text()').get()
+                                                            pitchers_fo_get = ptb.xpath('./td[contains(@data-label,"FO")]/text()').get()
+                                                            pitchers_go_get = ptb.xpath('./td[contains(@data-label,"GO")]/text()').get()
+                                                            pitchers_np_get = ptb.xpath('./td[contains(@data-label,"NP")]/text()').get()
+
+                                                            try:
+
+                                                                insert_query_pitchers = f"INSERT INTO `{db_data_table_pitchers}` ( `player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `site_name`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `WP`, `BK`, `HBP`, `IBB`, `AB`, `BF`, `FO`, `GO`, `NP`) " \
+                                                                                        f"""VALUES ("{pitchers_player}","{school_name_pitchers}","{game_result}","{box_score_link}","{mach_date_get1}","{final_event_name}","","{site_name}",{pitchers_ip_get},{pitchers_h_get},{pitchers_r_get},{pitchers_er_get},{pitchers_bb_get},{pitchers_so_get},"",{pitchers_wp_get},{pitchers_bk_get},{pitchers_hbp_get},{pitchers_ibb_get},{pitchers_ab_get},{pitchers_bf_get},{pitchers_fo_get},{pitchers_go_get},{pitchers_np_get})"""
+
+                                                                # print(insert_query_pitchers)
+                                                                self.cur.execute(
+                                                                    insert_query_pitchers)
+                                                                self.con.commit()
+                                                                print("inserted...")
+
+                                                            except Exception as e:
+                                                                print('Error In Insert Query....:{}:{}'.format(e, box_score_link))
 
                                 except Exception as e:
                                     print('Error: today_split_month or today_split_date indexing....:',e)

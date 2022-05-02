@@ -10,7 +10,7 @@ from random_user_agent.params import SoftwareName, OperatingSystem
 
 software_names = [SoftwareName.CHROME.value]
 operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
-#test git2
+#test git
 
 def user_agent_get():
     user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=100)

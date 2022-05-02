@@ -227,3 +227,4 @@ class MainScrape(scrapy.Spider):
 
 # from scrapy.cmdline import execute
 # execute('scrapy crawl mycrawler1_d'.split())
+#new

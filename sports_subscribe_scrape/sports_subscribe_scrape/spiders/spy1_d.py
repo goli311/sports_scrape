@@ -60,8 +60,8 @@ class MainScrape(scrapy.Spider):
 
                     match_date = final_box_score_link.split("/")[-1].split("_")[0]
 
-                    yesterday_date = (date.today() - timedelta(days=1)).strftime('%Y%m%d')
-                    # yesterday_date = date.today().strftime('%Y%m%d')
+                    # yesterday_date = (date.today() - timedelta(days=3)).strftime('%Y%m%d')
+                    yesterday_date = date.today().strftime('%Y%m%d')
 
                     if match_date == yesterday_date:
                         print("...MATCH AVAILABLE...")
@@ -171,8 +171,8 @@ class MainScrape(scrapy.Spider):
 
                                     try:
                                         insert_query = f"INSERT INTO {db_data_table_pitcher}" \
-                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `site_name`) " \
-                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','{site_name}')"
+                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`,`WP`,`BK`,`HBP`,`IBB`,`AB`,`BF`,`FO`,`GO`,`NP`,`site_name`) " \
+                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','0','0','0','0','0','0','0','0','0','{site_name}')"
 
                                         print(insert_query)
                                         self.cur.execute(insert_query)
@@ -200,8 +200,8 @@ class MainScrape(scrapy.Spider):
 
                                     try:
                                         insert_query = f"INSERT INTO {db_data_table_pitcher}" \
-                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `site_name`) " \
-                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','{site_name}')"
+                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`,`WP`,`BK`,`HBP`,`IBB`,`AB`,`BF`,`FO`,`GO`,`NP`,`site_name`) " \
+                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','0','0','0','0','0','0','0','0','0','{site_name}')"
 
                                         print(insert_query)
                                         self.cur.execute(insert_query)
@@ -227,4 +227,4 @@ class MainScrape(scrapy.Spider):
 
 # from scrapy.cmdline import execute
 # execute('scrapy crawl mycrawler1_d'.split())
-#new
+

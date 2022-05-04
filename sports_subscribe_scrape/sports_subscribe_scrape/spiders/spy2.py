@@ -219,7 +219,7 @@ class BaseballScrape(scrapy.Spider):
 
                                                             try:
 
-                                                                insert_query_pitchers = f"INSERT INTO `{db_data_table_pitchers}` ( `player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `site_name`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `WP`, `BK`, `HBP`, `IBB`, `AB`, `BF`, `FO`, `GO`, `NP`) " \
+                                                                insert_query_pitchers = f"INSERT INTO `{db_data_table_pitcher}` ( `player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `site_name`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `WP`, `BK`, `HBP`, `IBB`, `AB`, `BF`, `FO`, `GO`, `NP`) " \
                                                                                         f"""VALUES ("{pitchers_player}","{school_name_pitchers}","{game_result}","{box_score_link}","{mach_date_get1}","{final_event_name}","","{site_name}",{pitchers_ip_get},{pitchers_h_get},{pitchers_r_get},{pitchers_er_get},{pitchers_bb_get},{pitchers_so_get},"",{pitchers_wp_get},{pitchers_bk_get},{pitchers_hbp_get},{pitchers_ibb_get},{pitchers_ab_get},{pitchers_bf_get},{pitchers_fo_get},{pitchers_go_get},{pitchers_np_get})"""
 
                                                                 # print(insert_query_pitchers)

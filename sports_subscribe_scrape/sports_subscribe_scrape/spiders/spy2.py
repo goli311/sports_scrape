@@ -68,7 +68,7 @@ class BaseballScrape(scrapy.Spider):
                             if mach_date_get:
                                 mach_date_get1=mach_date_get.strip()
 
-                                prev_date_get = datetime.today() - timedelta(days=1)
+                                prev_date_get = datetime.today()
 
                                 prev_date_month=prev_date_get.strftime("%b")
                                 prev_date_date=prev_date_get.strftime("%#d")

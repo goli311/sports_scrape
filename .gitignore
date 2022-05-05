@@ -1,1 +1,6 @@
+config
+config.py
 **/**/config.py
+**/**/config.*
+sports_subscribe_scrape/sports_subscribe_scrape/config.py
+sports_subscribe_scrape/sports_subscribe_scrape/config.*

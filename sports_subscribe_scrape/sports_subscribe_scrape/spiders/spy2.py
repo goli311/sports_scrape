@@ -31,7 +31,6 @@ class BaseballScrape(scrapy.Spider):
         results = [('https://generalssports.com/sports/baseball/schedule', 'generalssports'),
                    ('https://jmusports.com/sports/baseball/schedule?path=baseball', 'jmusports')]
 
-
         for i in results:
             url=i[0]
             site_name=i[1]

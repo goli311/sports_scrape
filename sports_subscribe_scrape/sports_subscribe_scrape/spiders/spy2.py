@@ -31,7 +31,6 @@ class BaseballScrape(scrapy.Spider):
         results = [('https://generalssports.com/sports/baseball/schedule', 'generalssports'),
                    ('https://jmusports.com/sports/baseball/schedule?path=baseball', 'jmusports')]
 
-
         for i in results:
             url=i[0]
             site_name=i[1]
@@ -69,6 +68,7 @@ class BaseballScrape(scrapy.Spider):
                                 mach_date_get1=mach_date_get.strip()
 
                                 prev_date_get = datetime.today()
+                                # prev_date_get = datetime.today() - timedelta(days=1)
 
                                 prev_date_month=prev_date_get.strftime("%b")
                                 prev_date_date=prev_date_get.strftime("%#d")
@@ -181,14 +181,12 @@ class BaseballScrape(scrapy.Spider):
                                                 if pitchers_table_check:
                                                     pitchers_tbody_get = pt.xpath('.//tbody/tr')
                                                     school_name_pitchers = ''
-                                                    school_name_pitchers = pt.xpath(
-                                                        './caption/text()').get()
+                                                    school_name_pitchers = pt.xpath('./caption/text()').get()
                                                     print("school", school_name_pitchers)
                                                     if pitchers_tbody_get:
                                                         for ptb in pitchers_tbody_get:
                                                             pitchers_player = ''
-                                                            pitchers_player_get = ptb.xpath(
-                                                                './th/a/text()')
+                                                            pitchers_player_get = ptb.xpath('./th/a/text()')
                                                             if pitchers_player_get:
                                                                 pitchers_player1 = pitchers_player_get.get()
                                                                 if pitchers_player1:
@@ -223,8 +221,7 @@ class BaseballScrape(scrapy.Spider):
                                                                                         f"""VALUES ("{pitchers_player}","{school_name_pitchers}","{game_result}","{box_score_link}","{mach_date_get1}","{final_event_name}","","{site_name}",{pitchers_ip_get},{pitchers_h_get},{pitchers_r_get},{pitchers_er_get},{pitchers_bb_get},{pitchers_so_get},"0",{pitchers_wp_get},{pitchers_bk_get},{pitchers_hbp_get},{pitchers_ibb_get},{pitchers_ab_get},{pitchers_bf_get},{pitchers_fo_get},{pitchers_go_get},{pitchers_np_get})"""
 
                                                                 # print(insert_query_pitchers)
-                                                                self.cur.execute(
-                                                                    insert_query_pitchers)
+                                                                self.cur.execute(insert_query_pitchers)
                                                                 self.con.commit()
                                                                 print("inserted...")
 
@@ -246,5 +243,5 @@ class BaseballScrape(scrapy.Spider):
             print("Error in Parse Method", E)
             return None
 
-# from scrapy.cmdline import execute
+from scrapy.cmdline import execute
 # execute('scrapy crawl mycrawler2'.split())

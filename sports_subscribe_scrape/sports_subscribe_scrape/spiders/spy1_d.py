@@ -10,13 +10,13 @@ from random_user_agent.params import SoftwareName, OperatingSystem
 
 software_names = [SoftwareName.CHROME.value]
 operating_systems = [OperatingSystem.WINDOWS.value, OperatingSystem.LINUX.value]
-
+#test git2
 
 def user_agent_get():
     user_agent_rotator = UserAgent(software_names=software_names, operating_systems=operating_systems, limit=100)
     user_agent = user_agent_rotator.get_random_user_agent()
     return user_agent
-
+#test git
 
 class MainScrape(scrapy.Spider):
     name = 'mycrawler1_d'
@@ -32,7 +32,11 @@ class MainScrape(scrapy.Spider):
 
     def start_requests(self):
 
-        results = [('https://www.rbcathletics.com/sports/bsb/2021-22/schedule', 'rbcathletics')]
+        # results = [('https://www.rbcathletics.com/sports/bsb/2021-22/schedule', 'rbcathletics'),
+        #            ('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
+
+        results = [('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
+
 
         for i in results:
             url = i[0]
@@ -49,44 +53,73 @@ class MainScrape(scrapy.Spider):
     def parse(self, response):
         try:
             site_name = response.meta.get('site_name')
-            if response.xpath('//div[@class="links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]'):  # check if box score link is available or not
 
-                main_loop = response.xpath('//div[@class="links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]')
+
+            if response.xpath('//div[@class="links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]') or response.xpath('//td[@class="e_links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]'):  # check if box score link is available or not
+
+                if site_name=="rbcathletics":
+                    main_loop = response.xpath('//div[@class="links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]')
+                else:
+                    main_loop=response.xpath('//td[@class="e_links"]//ul//li//a[contains(@aria-label,"Box Score")][not(contains(@target,"_blank"))]')
+
                 for i in main_loop:
 
                     box_score_link = i.xpath('.//@href').get()
-                    final_box_score_link = f"https://www.rbcathletics.com{box_score_link}"
+
+                    if site_name == "rbcathletics":
+                        final_box_score_link = f"https://www.rbcathletics.com{box_score_link}"
+                    else:
+                        final_box_score_link=f"https://www.lynchburgsports.com{box_score_link}"
 
 
                     match_date = final_box_score_link.split("/")[-1].split("_")[0]
 
-                    yesterday_date = (date.today() - timedelta(days=1)).strftime('%Y%m%d')
+                    yesterday_date = (date.today() - timedelta(days=2)).strftime('%Y%m%d')
                     # yesterday_date = date.today().strftime('%Y%m%d')
 
                     if match_date == yesterday_date:
                         print("...MATCH AVAILABLE...")
+                        if site_name == "rbcathletics":
+                            event_name = i.xpath('.//@aria-label').get()
 
-                        event_name = i.xpath('.//@aria-label').get()
+                            final_event_get=event_name.split('Baseball event:')[1].split(': Box Score')[0].strip()
 
-                        final_event_get=event_name.split('Baseball event:')[1].split(': Box Score')[0].strip()
-
-                        final_event=final_event_get.split(": ")[1].strip()
-
-
-                        opponent = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="opponent"]//span[@class="team-name"]//text()').get()
-                        opponent_final=opponent.strip()
-
-                        match_date_get = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="date"]//@title').get()
-                        final_match_date=match_date_get.strip()
+                            final_event=final_event_get.split(": ")[1].strip()
 
 
-                        status = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="status"]//text()').get()
+                            opponent = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="opponent"]//span[@class="team-name"]//text()').get()
+                            opponent_final=opponent.strip()
 
-                        final_game_status=status.strip()
+                            match_date_get = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="date"]//@title').get()
+                            final_match_date=match_date_get.strip()
 
-                        result = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="result"]//text()').get()
-                        final_result=result.strip()
 
+                            status = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="status"]//text()').get()
+
+                            final_game_status=status.strip()
+
+                            result = i.xpath('.//ancestor::div[@class="links"]//ancestor::div[@class="event-info clearfix"]//div[@class="result"]//text()').get()
+                            final_result=result.strip()
+
+                        else:
+                            event_name = i.xpath('.//@aria-label').get()
+
+                            final_event_get = event_name.split('Baseball event:')[1].split(': Box Score')[0].strip()
+
+                            final_event = final_event_get.split(": ")[1].strip()
+
+                            opponent = i.xpath('.//ancestor::td[@class="e_links"]//ancestor::tr//td[@class="e_team e_opponent"]//span[@class="team-name"]//text()').get()
+                            opponent_final = opponent.strip()
+
+
+                            final_match_date=''
+
+                            status = i.xpath( './/ancestor::td[@class="e_links"]//ancestor::tr//td[@class="e_status"]//text()').get()
+
+                            final_game_status = status.strip()
+
+                            result = i.xpath( './/ancestor::td[@class="e_links"]//ancestor::tr//td[@class="e_result"]//text()').get()
+                            final_result = result.strip()
 
                         """------Request to the box score link------"""
                         try:
@@ -100,7 +133,7 @@ class MainScrape(scrapy.Spider):
 
                                     school_name=i.xpath('.//span[contains(@class,"player-name")]//ancestor::table//span[@class="team-name"]//text()').get()
                                     final_school_name=school_name.strip()
-                                    player = i.xpath('.//span[contains(@class,"player-name")]//text()').get()
+                                    player =(i.xpath('.//span[contains(@class,"player-name")]//text()').get()).replace("'","\\'") if i.xpath('.//span[contains(@class,"player-name")]//text()').get() else ""
                                     ab = i.xpath('.//span[contains(@class,"player-name")]//following::td[1]//text()').get()
                                     r = i.xpath('.//span[contains(@class,"player-name")]//following::td[2]//text()').get()
                                     h = i.xpath('.//span[contains(@class,"player-name")]//following::td[3]//text()').get()
@@ -129,7 +162,7 @@ class MainScrape(scrapy.Spider):
 
                                     school_name = i.xpath('.//a[contains(@class,"player-name")]//ancestor::table//a[@class="team-name"]//text()').get()
                                     final_school_name = school_name.strip()
-                                    player = i.xpath('.//a[contains(@class,"player-name")]//text()').get()
+                                    player =(i.xpath('.//a[contains(@class,"player-name")]//text()').get()).replace("'","\\'") if i.xpath('.//a[contains(@class,"player-name")]//text()').get() else ""
                                     ab = i.xpath('.//a[contains(@class,"player-name")]//following::td[1]//text()').get()
                                     r = i.xpath('.//a[contains(@class,"player-name")]//following::td[2]//text()').get()
                                     h = i.xpath('.//a[contains(@class,"player-name")]//following::td[3]//text()').get()
@@ -159,7 +192,7 @@ class MainScrape(scrapy.Spider):
                                     school_name = j.xpath( './/span[contains(@class,"player-name")]//ancestor::table//span[@class="team-name"]//text()').get()
                                     final_school_name = school_name.strip()
 
-                                    player = j.xpath('.//span[contains(@class,"player-name")]//text()').get()
+                                    player = (j.xpath('.//span[contains(@class,"player-name")]//text()').get()).replace("'","\\'") if j.xpath('.//span[contains(@class,"player-name")]//text()').get() else ""
                                     ip = j.xpath('.//span[contains(@class,"player-name")]//following::td[1]//text()').get()
                                     h = j.xpath('.//span[contains(@class,"player-name")]//following::td[2]//text()').get()
                                     r = j.xpath('.//span[contains(@class,"player-name")]//following::td[3]//text()').get()
@@ -171,8 +204,8 @@ class MainScrape(scrapy.Spider):
 
                                     try:
                                         insert_query = f"INSERT INTO {db_data_table_pitcher}" \
-                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `site_name`) " \
-                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','{site_name}')"
+                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`,`WP`,`BK`,`HBP`,`IBB`,`AB`,`BF`,`FO`,`GO`,`NP`,`site_name`) " \
+                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','0','0','0','0','0','0','0','0','0','{site_name}')"
 
                                         print(insert_query)
                                         self.cur.execute(insert_query)
@@ -189,7 +222,7 @@ class MainScrape(scrapy.Spider):
                                     school_name = j.xpath(
                                         './/a[contains(@class,"player-name")]//ancestor::table//a[@class="team-name"]//text()').get()
                                     final_school_name = school_name.strip()
-                                    player = j.xpath('.//a[contains(@class,"player-name")]//text()').get()
+                                    player = (j.xpath('.//a[contains(@class,"player-name")]//text()').get()).replace("'","\\'") if j.xpath('.//a[contains(@class,"player-name")]//text()').get() else ""
                                     ip = j.xpath('.//a[contains(@class,"player-name")]//following::td[1]//text()').get()
                                     h = j.xpath('.//a[contains(@class,"player-name")]//following::td[2]//text()').get()
                                     r = j.xpath('.//a[contains(@class,"player-name")]//following::td[3]//text()').get()
@@ -200,8 +233,8 @@ class MainScrape(scrapy.Spider):
 
                                     try:
                                         insert_query = f"INSERT INTO {db_data_table_pitcher}" \
-                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`, `site_name`) " \
-                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','{site_name}')"
+                                                       f"(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `IP`, `H`, `R`, `ER`, `BB`, `SO`, `HR`,`WP`,`BK`,`HBP`,`IBB`,`AB`,`BF`,`FO`,`GO`,`NP`,`site_name`) " \
+                                                       f"VALUES ('{player}','{final_school_name}','{final_result}','{final_box_score_link}','{final_match_date}','{final_event}','{final_game_status}','{ip}','{h}','{r}','{er}','{bb}','{so}','{hr}','0','0','0','0','0','0','0','0','0','{site_name}')"
 
                                         print(insert_query)
                                         self.cur.execute(insert_query)
@@ -218,12 +251,12 @@ class MainScrape(scrapy.Spider):
                         """-------------------------"""
 
                     else:
-                        print(".....no match available.....")
+                        print(".....no match.....")
 
         except Exception as E:
             print("Error in Main Parse Method", E)
             return None
 
 
-# from scrapy.cmdline import execute
+from scrapy.cmdline import execute
 # execute('scrapy crawl mycrawler1_d'.split())

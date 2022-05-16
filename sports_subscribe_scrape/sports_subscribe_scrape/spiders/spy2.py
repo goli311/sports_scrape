@@ -68,8 +68,8 @@ class BaseballScrape(scrapy.Spider):
                             if mach_date_get:
                                 mach_date_get1=mach_date_get.strip()
 
-                                prev_date_get = datetime.today()
-                                # prev_date_get = datetime.today() - timedelta(days=4)
+                                # prev_date_get = datetime.today()
+                                prev_date_get = datetime.today() - timedelta(days=1)
 
                                 prev_date_month=prev_date_get.strftime("%b")
                                 prev_date_date=prev_date_get.strftime("%#d")
@@ -182,14 +182,12 @@ class BaseballScrape(scrapy.Spider):
                                                 if pitchers_table_check:
                                                     pitchers_tbody_get = pt.xpath('.//tbody/tr')
                                                     school_name_pitchers = ''
-                                                    school_name_pitchers = pt.xpath(
-                                                        './caption/text()').get()
+                                                    school_name_pitchers = pt.xpath('./caption/text()').get()
                                                     print("school", school_name_pitchers)
                                                     if pitchers_tbody_get:
                                                         for ptb in pitchers_tbody_get:
                                                             pitchers_player = ''
-                                                            pitchers_player_get = ptb.xpath(
-                                                                './th/a/text()')
+                                                            pitchers_player_get = ptb.xpath('./th/a/text()')
                                                             if pitchers_player_get:
                                                                 pitchers_player1 = pitchers_player_get.get()
                                                                 if pitchers_player1:

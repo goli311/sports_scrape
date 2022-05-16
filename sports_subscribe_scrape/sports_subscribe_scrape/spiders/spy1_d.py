@@ -32,10 +32,10 @@ class MainScrape(scrapy.Spider):
 
     def start_requests(self):
 
-        # results = [('https://www.rbcathletics.com/sports/bsb/2021-22/schedule', 'rbcathletics'),
-        #            ('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
+        results = [('https://www.rbcathletics.com/sports/bsb/2021-22/schedule', 'rbcathletics'),
+                   ('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
 
-        results = [('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
+        # results = [('https://www.lynchburgsports.com/sports/bsb/2021-22/schedule', 'lynchburgsports')]
 
 
         for i in results:

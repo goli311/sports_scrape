@@ -162,7 +162,7 @@ class BaseballScrape(scrapy.Spider):
 
 
                                                         try:
-                                                            insert_query = f"""INSERT INTO `{db_data_table}`(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `AB`, `R`, `H`, `RBI`, `BB`, `SO`, `LOB`, `site_name`) 
+                                                            insert_query = f"""INSERT INTO `{db_data_table}`(`player`, `school`, `result`, `box_score_link`, `match_date`, `event_name`, `game_status`, `AB`, `R`, `H`, `RBI`, `BB`, `SO`, `LOB`, `site_name`)
                                                             VALUES ("{player_name}","{school_name_temp}","{game_result}","{box_score_link}","{mach_date_get1}","{final_event_name}","","{ab_get}","{r_get}","{h_get}","{rbi_get}","{bb_get}","{so_get}","{lob_get}","{site_name}")"""
 
                                                             # print(insert_query)

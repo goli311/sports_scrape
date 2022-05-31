@@ -74,7 +74,7 @@ class MainScrape(scrapy.Spider):
 
                     match_date = final_box_score_link.split("/")[-1].split("_")[0]
 
-                    yesterday_date = (date.today() - timedelta(days=2)).strftime('%Y%m%d')
+                    yesterday_date = (date.today() - timedelta(days=1)).strftime('%Y%m%d')
                     # yesterday_date = date.today().strftime('%Y%m%d')
 
                     if match_date == yesterday_date:

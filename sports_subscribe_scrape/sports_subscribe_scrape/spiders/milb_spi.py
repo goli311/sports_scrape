@@ -1,7 +1,6 @@
 """
 With Win And Lose Score With Pitchers AVG Score (W,1-0)
 Added New Format Result with Actual Score
-
 """
 import json
 import scrapy

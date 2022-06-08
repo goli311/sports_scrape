@@ -31,8 +31,8 @@ class BaseballScrape(scrapy.Spider):
     }
     def start_requests(self):
 
-        today_date_get = (datetime.today()-timedelta(days=2)).strftime('%Y-%m-%d')
-        # today_date_get = (datetime.today()).strftime('%Y-%m-%d')
+        # today_date_get = (datetime.today()-timedelta(days=4)).strftime('%Y-%m-%d')
+        today_date_get = (datetime.today()).strftime('%Y-%m-%d')
         url=f'https://statsapi.mlb.com/api/v1/schedule?sportId=14&date={today_date_get}'
         site_name='milb'
 
@@ -71,26 +71,40 @@ class BaseballScrape(scrapy.Spider):
                         for i in games_get:
                             gamepk_get= i.get('gamePk')
                             # TODO: Get Match result From : Main Page...................
-                            result_get=''
+
+                            home_result_get=''
+                            away_result_get=''
                             try:
                                 away_main_page_score=i.get('teams').get('away').get('score')
                                 home_main_page_score=i.get('teams').get('home').get('score')
 
-                                # TODO : W or L Based On Away Team...........
-                                w_or_l=''
+                                # TODO : W or L Based On Home Team...........
+                                home_w_or_l=''
                                 home_main_page_result=i.get('teams').get('home').get('isWinner')
                                 if home_main_page_result:
-                                    w_or_l='W'
+                                    home_w_or_l='W'
                                 else:
-                                    w_or_l = 'L'
-
+                                    home_w_or_l = 'L'
                                 if away_main_page_score != None and home_main_page_score != None:
-                                    result_get = f'{w_or_l}, {home_main_page_score}-{away_main_page_score}'
+                                    home_result_get = f'{home_w_or_l}, {home_main_page_score}-{away_main_page_score}'
+                                    
+                                # TODO : W or L Based On away Team...........
+                                away_w_or_l=''
+                                away_main_page_result=i.get('teams').get('away').get('isWinner')
+                                if away_main_page_result:
+                                    away_w_or_l='W'
+                                else:
+                                    away_w_or_l = 'L'
+                                if away_main_page_score != None and away_main_page_score != None:
+                                    away_result_get = f'{away_w_or_l}, {away_main_page_score}-{home_main_page_score}'
+                                    
                             except:
-                                result_get=''
+                                ...
 
-                            if result_get == '':
-                                result_get='-'
+                            if home_result_get == '':
+                                home_result_get='-'
+                            if away_result_get == '':
+                                away_result_get='-'
 
 
                             # TODO:................................................
@@ -120,6 +134,11 @@ class BaseballScrape(scrapy.Spider):
                                         print("Error in: away_data_get...:", E)
                                         break
                                         # return None
+                                    result_get=''
+                                    if k=='home':
+                                        result_get=home_result_get
+                                    elif k=='away':
+                                        result_get=away_result_get
 
                                     # TODO : Scrape Batters data-------------------
                                     batters_ids_get=away_data_get.get('batters')
